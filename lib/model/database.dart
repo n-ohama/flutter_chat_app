@@ -41,4 +41,40 @@ class DatabaseMethods {
       print(e.toString());
     }
   }
+
+  getConversation(String chatroomId) {
+    try {
+      return FirebaseFirestore.instance
+          .collection("chatroom")
+          .doc(chatroomId)
+          .collection("chats")
+          .orderBy("time", descending: false)
+          .snapshots();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  addConversation(String chatroomId, chatMap) {
+    try {
+      FirebaseFirestore.instance
+          .collection("chatroom")
+          .doc(chatroomId)
+          .collection("chats")
+          .add(chatMap);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  getMyChatrooms(String username) {
+    try {
+      return FirebaseFirestore.instance
+          .collection("chatroom")
+          .where("users", arrayContains: username)
+          .snapshots();
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }

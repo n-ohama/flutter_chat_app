@@ -33,3 +33,25 @@ TextStyle underLineStyle() {
     decoration: TextDecoration.underline,
   );
 }
+
+List<Color> myColorList = [
+  Color(0xff007ef4),
+  Color(0xff2a75bc),
+];
+
+List<Color> opponentColorList = [
+  Color(0x1affffff),
+  Color(0x1affffff),
+];
+
+BorderRadius myRadius = BorderRadius.only(
+  topLeft: Radius.circular(23),
+  topRight: Radius.circular(23),
+  bottomLeft: Radius.circular(23),
+);
+
+BorderRadius opponentRadius = BorderRadius.only(
+  topLeft: Radius.circular(23),
+  topRight: Radius.circular(23),
+  bottomRight: Radius.circular(23),
+);

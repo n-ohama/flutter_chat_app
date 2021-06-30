@@ -46,10 +46,8 @@ class _SignInState extends State<SignIn> {
     return Scaffold(
       appBar: appBarMain(context),
       body: isLoading
-          ? Container(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+          ? Center(
+              child: CircularProgressIndicator(),
             )
           : SingleChildScrollView(
               child: Container(

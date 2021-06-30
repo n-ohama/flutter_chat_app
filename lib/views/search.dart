@@ -33,7 +33,7 @@ class _SearchScreenState extends State<SearchScreen> {
       databaseMethods.createChatroom(chatroomId, chatroomMap);
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => ConversationScreen()),
+        MaterialPageRoute(builder: (context) => ConversationScreen(chatroomId)),
       );
     } else {
       print("it's Me");
