@@ -1,14 +1,20 @@
 import 'package:chat_app/model/auth.dart';
+import 'package:chat_app/model/database.dart';
+import 'package:chat_app/model/shared_functions.dart';
+import 'package:chat_app/views/chatroom_screen.dart';
 import 'package:chat_app/widgets/widget.dart';
 import 'package:flutter/material.dart';
 
 class SignIn extends StatefulWidget {
+  final Function toggle;
+  SignIn(this.toggle);
   @override
   _SignInState createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
   AuthMethods authMethods = AuthMethods();
+  DatabaseMethods databaseMethods = DatabaseMethods();
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
   TextEditingController emailController = TextEditingController();
@@ -17,10 +23,20 @@ class _SignInState extends State<SignIn> {
   signInMe() {
     if (formKey.currentState.validate()) {
       setState(() => isLoading = true);
+      SharedFunctions.saveUsermail(emailController.text);
+      databaseMethods.getUserByUserEmail(emailController.text).then((value) {
+        final snapShotMap = value.docs[0].data() as Map;
+        SharedFunctions.saveUsername(snapShotMap["name"]);
+      });
       authMethods
           .signInWithEmailAndPassword(emailController.text, passController.text)
           .then((value) {
         print(value.uid);
+        SharedFunctions.saveLoggedIn(true);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ChatroomScreen()),
+        );
       });
     }
   }
@@ -127,7 +143,16 @@ class _SignInState extends State<SignIn> {
                         children: [
                           Text("Don't have account? ",
                               style: simpleTextStyle()),
-                          Text("Register now", style: underLineStyle()),
+                          GestureDetector(
+                            onTap: () => widget.toggle(),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                "Register now",
+                                style: underLineStyle(),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],

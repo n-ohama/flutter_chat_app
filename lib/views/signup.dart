@@ -1,14 +1,20 @@
 import 'package:chat_app/model/auth.dart';
+import 'package:chat_app/model/database.dart';
+import 'package:chat_app/model/shared_functions.dart';
+import 'package:chat_app/views/chatroom_screen.dart';
 import 'package:chat_app/widgets/widget.dart';
 import 'package:flutter/material.dart';
 
 class SignUp extends StatefulWidget {
+  final Function toggle;
+  SignUp(this.toggle);
   @override
   _SignUpState createState() => _SignUpState();
 }
 
 class _SignUpState extends State<SignUp> {
   AuthMethods authMethods = AuthMethods();
+  DatabaseMethods databaseMethods = DatabaseMethods();
   final formKey = GlobalKey<FormState>();
   bool isLoading = false;
   TextEditingController nameController = TextEditingController();
@@ -18,10 +24,22 @@ class _SignUpState extends State<SignUp> {
   signMeUp() {
     if (formKey.currentState.validate()) {
       setState(() => isLoading = true);
+      Map<String, String> userMap = {
+        "name": nameController.text,
+        "email": emailController.text,
+      };
+      SharedFunctions.saveUsername(nameController.text);
+      SharedFunctions.saveUsermail(emailController.text);
       authMethods
           .signUpWithEmailAndPassword(emailController.text, passController.text)
           .then((value) {
         print(value.uid);
+        databaseMethods.uploadUserInfo(userMap);
+        SharedFunctions.saveLoggedIn(true);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ChatroomScreen()),
+        );
       });
     }
   }
@@ -32,9 +50,7 @@ class _SignUpState extends State<SignUp> {
       appBar: appBarMain(context),
       body: isLoading
           ? Container(
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
+              child: Center(child: CircularProgressIndicator()),
             )
           : SingleChildScrollView(
               child: Container(
@@ -138,7 +154,16 @@ class _SignUpState extends State<SignUp> {
                         children: [
                           Text("Already have account? ",
                               style: simpleTextStyle()),
-                          Text("SignIn now", style: underLineStyle()),
+                          GestureDetector(
+                            onTap: () => widget.toggle(),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                "SignIn now",
+                                style: underLineStyle(),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ],
